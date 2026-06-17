@@ -3,11 +3,11 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from streamlit_folium import st_folium
+from modules.risk_module import *
+from modules.resource_module import *
+from modules.simulator_module import *
+from modules.diversion_module import *
 
-from notebooks.risk_module import *
-from notebooks.resource_module import *
-from notebooks.simulator_module import *
-from notebooks.diversion_module import *
 
 # ==========================================
 # PAGE CONFIG
