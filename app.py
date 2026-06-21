@@ -101,9 +101,9 @@ page = st.sidebar.radio(
 
         "🛣 Diversion Control",
 
-        "📈 System Analytics"
+        "📈 System Analytics",
 
-        "🧠 Learning Engine",
+        "🧠 Learning Engine"
 
     ]
 )
