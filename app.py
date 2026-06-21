@@ -888,18 +888,19 @@ elif page == "📈 System Analytics":
 # ==========================================
 # LIVE EVENT FEED
 # ==========================================
-
 elif page == "📡 Live Event Feed":
 
-    st.header(
-        "📡 Live Event Feed"
-    )
+    st.header("📡 Live Event Feed")
 
     live_df = pd.read_csv(
         "data/live_events.csv"
     )
 
-    c1,c2 = st.columns(2)
+    # ==========================
+    # KPIs
+    # ==========================
+
+    c1, c2 = st.columns(2)
 
     c1.metric(
         "Total Events",
@@ -910,8 +911,7 @@ elif page == "📡 Live Event Feed":
         "Active Events",
         len(
             live_df[
-                live_df["status"]
-                == "Live"
+                live_df["status"] == "Live"
             ]
         )
     )
@@ -920,9 +920,10 @@ elif page == "📡 Live Event Feed":
         live_df,
         use_container_width=True
     )
-    # ==========================================
-# ACTIVE EVENTS
-# ==========================================
+
+    # ==========================
+    # Active Events
+    # ==========================
 
     st.markdown("## 🚨 Active Events")
 
@@ -934,22 +935,25 @@ elif page == "📡 Live Event Feed":
 
         st.error(
             f"""
-    🔴 {row['event_name']}
+🔴 {row['event_name']}
 
-    📍 Location : {row['location']}
+📍 Location : {row['location']}
 
-    ⚡ Event Type : {row['event_type']}
-    """
+⚡ Event Type : {row['event_type']}
+
+🕒 Status : {row['status']}
+"""
         )
 
     st.markdown("---")
 
+    # ==========================
+    # Event Selection
+    # ==========================
+
     selected_event = st.selectbox(
-
         "Select Event",
-
         live_df["event_name"]
-
     )
 
     event_row = live_df[
@@ -958,46 +962,72 @@ elif page == "📡 Live Event Feed":
         selected_event
     ].iloc[0]
 
+    # ==========================
+    # Event Details
+    # ==========================
+
+    st.markdown("## 📋 Event Details")
+
+    d1, d2, d3 = st.columns(3)
+
+    d1.metric(
+        "Crowd Size",
+        event_row["crowd_size"]
+    )
+
+    d2.metric(
+        "Duration (Hours)",
+        event_row["duration_hours"]
+    )
+
+    d3.metric(
+        "Risk Level",
+        event_row["risk_level"]
+    )
+
+    # ==========================
+    # ML Forecast
+    # ==========================
+
     result = simulate_event(
 
-    event_row["event_type"],
+        event_row["event_type"],
 
-    "High",
+        "High",
 
-    True,
+        True,
 
-    event_row["risk_level"],
+        event_row["risk_level"],
 
-    event_row["duration_hours"],
+        event_row["duration_hours"],
 
-    event_row["crowd_size"]
+        event_row["crowd_size"]
 
-)
-    # ==========================================
-# AI REASONING
-# ==========================================
-
-    st.markdown(
-        "### 🧠 AI Reasoning"
     )
+
+    # ==========================
+    # AI Reasoning
+    # ==========================
+
+    st.markdown("## 🧠 AI Reasoning")
 
     reason_df = pd.DataFrame({
 
         "Factor": [
 
             "Event Type",
-            "Priority",
-            "Road Closure",
-            "Historical Risk"
+            "Estimated Crowd",
+            "Duration",
+            "Risk Level"
 
         ],
 
         "Value": [
 
             event_row["event_type"],
-            "High",
-            "Yes",
-            "High"
+            event_row["crowd_size"],
+            event_row["duration_hours"],
+            event_row["risk_level"]
 
         ]
 
@@ -1005,45 +1035,54 @@ elif page == "📡 Live Event Feed":
 
     st.table(reason_df)
 
-    st.subheader(
-        "Forecasted Impact"
-    )
+    # ==========================
+    # Forecast
+    # ==========================
 
-    c1,c2,c3 = st.columns(3)
+    st.markdown("## 🔮 Forecasted Impact")
+
+    c1, c2, c3 = st.columns(3)
 
     c1.metric(
-    "Impact Score",
-    result["impact_score"]
+        "Impact Score",
+        result["impact_score"]
     )
 
     c2.metric(
-        "Officers",
+        "Recommended Officers",
         result["officers_range"]
     )
 
     c3.metric(
-        "Barricades",
+        "Recommended Barricades",
         result["barricades_range"]
     )
-        # ==========================================
-    # DIVERSION RECOMMENDATION
-    # ==========================================
 
-    st.markdown(
-        "### 🛣 Recommended Diversions"
+    st.success(
+        f"Recommended Response Level : {result['response']}"
     )
+
+    # ==========================
+    # Diversion Recommendation
+    # ==========================
+
+    st.markdown("## 🛣 Recommended Diversions")
 
     junction_df = load_junction_data()
 
-    sample_junction = junction_df[
-        "junction"
-    ].iloc[0]
+    selected_junction = st.selectbox(
+
+        "Select Affected Junction",
+
+        junction_df["junction"]
+
+    )
 
     diversions = suggest_diversion(
 
         junction_df,
 
-        sample_junction
+        selected_junction
 
     )
 
@@ -1054,6 +1093,36 @@ elif page == "📡 Live Event Feed":
         use_container_width=True
 
     )
+
+    # ==========================
+    # Diversion Map
+    # ==========================
+
+    try:
+
+        diversion_map = create_diversion_map(
+
+            junction_df,
+
+            selected_junction
+
+        )
+
+        st_folium(
+
+            diversion_map,
+
+            width=1200,
+
+            height=500
+
+        )
+
+    except:
+
+        st.warning(
+            "Map could not be generated."
+        )
 
 elif page == "🧠 Learning Engine":
 
