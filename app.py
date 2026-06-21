@@ -9,6 +9,19 @@ from modules.simulator_module import *
 from modules.diversion_module import *
 from modules.learning_module import *
 from modules.retraining_module import *
+import joblib
+
+rf_model = joblib.load(
+    "models/impact_model.pkl"
+)
+
+event_encoder = joblib.load(
+    "models/event_encoder.pkl"
+)
+
+risk_encoder = joblib.load(
+    "models/risk_encoder.pkl"
+)
 # ==========================================
 # PAGE CONFIG
 # ==========================================
@@ -907,6 +920,27 @@ elif page == "📡 Live Event Feed":
         live_df,
         use_container_width=True
     )
+    # ==========================================
+# ACTIVE EVENTS
+# ==========================================
+
+    st.markdown("## 🚨 Active Events")
+
+    live_events = live_df[
+        live_df["status"] == "Live"
+    ]
+
+    for _, row in live_events.iterrows():
+
+        st.error(
+            f"""
+    🔴 {row['event_name']}
+
+    📍 Location : {row['location']}
+
+    ⚡ Event Type : {row['event_type']}
+    """
+        )
 
     st.markdown("---")
 
@@ -926,19 +960,50 @@ elif page == "📡 Live Event Feed":
 
     result = simulate_event(
 
-        event_row["event_type"],
+    event_row["event_type"],
 
-        "High",
+    "High",
 
-        True,
+    True,
 
-        "High",
+    event_row["risk_level"],
 
-        4,
+    event_row["duration_hours"],
 
-        5000
+    event_row["crowd_size"]
 
+)
+    # ==========================================
+# AI REASONING
+# ==========================================
+
+    st.markdown(
+        "### 🧠 AI Reasoning"
     )
+
+    reason_df = pd.DataFrame({
+
+        "Factor": [
+
+            "Event Type",
+            "Priority",
+            "Road Closure",
+            "Historical Risk"
+
+        ],
+
+        "Value": [
+
+            event_row["event_type"],
+            "High",
+            "Yes",
+            "High"
+
+        ]
+
+    })
+
+    st.table(reason_df)
 
     st.subheader(
         "Forecasted Impact"
@@ -947,8 +1012,8 @@ elif page == "📡 Live Event Feed":
     c1,c2,c3 = st.columns(3)
 
     c1.metric(
-        "Impact Score",
-        result["impact_score"]
+    "Impact Score",
+    result["impact_score"]
     )
 
     c2.metric(
@@ -959,6 +1024,35 @@ elif page == "📡 Live Event Feed":
     c3.metric(
         "Barricades",
         result["barricades_range"]
+    )
+        # ==========================================
+    # DIVERSION RECOMMENDATION
+    # ==========================================
+
+    st.markdown(
+        "### 🛣 Recommended Diversions"
+    )
+
+    junction_df = load_junction_data()
+
+    sample_junction = junction_df[
+        "junction"
+    ].iloc[0]
+
+    diversions = suggest_diversion(
+
+        junction_df,
+
+        sample_junction
+
+    )
+
+    st.dataframe(
+
+        diversions,
+
+        use_container_width=True
+
     )
 
 elif page == "🧠 Learning Engine":
