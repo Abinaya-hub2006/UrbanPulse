@@ -1,1 +1,1 @@
-event_type,predicted_impact,actual_impact,predicted_officers,actual_officers,predicted_duration,actual_duration
+event_type,crowd_size,duration_hours,risk_level,actual_impact

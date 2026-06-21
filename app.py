@@ -8,7 +8,7 @@ from modules.resource_module import *
 from modules.simulator_module import *
 from modules.diversion_module import *
 from modules.learning_module import *
-
+from modules.retraining_module import *
 # ==========================================
 # PAGE CONFIG
 # ==========================================
@@ -870,6 +870,8 @@ elif page == "📈 System Analytics":
         use_container_width=True
 
     )
+
+
 elif page == "🧠 Learning Engine":
 
     st.header(
@@ -892,54 +894,78 @@ elif page == "🧠 Learning Engine":
 
     )
 
-    predicted_impact = st.number_input(
-        "Predicted Impact"
+    crowd_size = st.number_input(
+
+        "Crowd Size",
+
+        min_value=100,
+
+        value=1000
+
+    )
+
+    duration_hours = st.number_input(
+
+        "Duration Hours",
+
+        min_value=1,
+
+        value=2
+
+    )
+
+    risk_level = st.selectbox(
+
+        "Risk Level",
+
+        [
+
+            "Low",
+
+            "Medium",
+
+            "High",
+
+            "Critical"
+
+        ]
+
     )
 
     actual_impact = st.number_input(
-        "Actual Impact"
-    )
 
-    predicted_officers = st.number_input(
-        "Predicted Officers"
-    )
+        "Actual Impact Score",
 
-    actual_officers = st.number_input(
-        "Actual Officers Used"
-    )
+        min_value=1.0,
 
-    predicted_duration = st.number_input(
-        "Predicted Duration"
-    )
+        value=10.0
 
-    actual_duration = st.number_input(
-        "Actual Duration"
     )
 
     if st.button(
+
         "Save Review"
+
     ):
 
         add_review(
 
             event_type,
 
-            predicted_impact,
+            crowd_size,
 
-            actual_impact,
+            duration_hours,
 
-            predicted_officers,
+            risk_level,
 
-            actual_officers,
-
-            predicted_duration,
-
-            actual_duration
+            actual_impact
 
         )
 
         st.success(
-            "Review Stored Successfully"
+
+            "Review Added"
+
         )
 
     st.markdown("---")
@@ -947,30 +973,42 @@ elif page == "🧠 Learning Engine":
     reviews = load_reviews()
 
     st.subheader(
+
         "Historical Reviews"
+
     )
 
     st.dataframe(
-        reviews,
-        use_container_width=True
-    )
 
-    accuracy = calculate_accuracy(
-        reviews
+        reviews,
+
+        use_container_width=True
+
     )
 
     st.metric(
-        "Prediction Accuracy",
-        f"{accuracy}%"
+
+        "Total Reviews",
+
+        len(reviews)
+
     )
 
-    st.info(
+    st.markdown("---")
 
-        learning_insights(
-            reviews
+    if st.button(
+
+        "Retrain Model"
+
+    ):
+
+        total_records = retrain_model()
+
+        st.success(
+
+            f"Model Retrained Successfully using {total_records} records"
+
         )
-
-    )
 
 # ==========================================
 # FOOTER
