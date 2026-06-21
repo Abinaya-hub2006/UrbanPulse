@@ -103,6 +103,8 @@ page = st.sidebar.radio(
 
         "📈 System Analytics",
 
+        "📡 Live Event Feed",
+
         "🧠 Learning Engine"
 
     ]
@@ -870,7 +872,94 @@ elif page == "📈 System Analytics":
         use_container_width=True
 
     )
+# ==========================================
+# LIVE EVENT FEED
+# ==========================================
 
+elif page == "📡 Live Event Feed":
+
+    st.header(
+        "📡 Live Event Feed"
+    )
+
+    live_df = pd.read_csv(
+        "data/live_events.csv"
+    )
+
+    c1,c2 = st.columns(2)
+
+    c1.metric(
+        "Total Events",
+        len(live_df)
+    )
+
+    c2.metric(
+        "Active Events",
+        len(
+            live_df[
+                live_df["status"]
+                == "Live"
+            ]
+        )
+    )
+
+    st.dataframe(
+        live_df,
+        use_container_width=True
+    )
+
+    st.markdown("---")
+
+    selected_event = st.selectbox(
+
+        "Select Event",
+
+        live_df["event_name"]
+
+    )
+
+    event_row = live_df[
+        live_df["event_name"]
+        ==
+        selected_event
+    ].iloc[0]
+
+    result = simulate_event(
+
+        event_row["event_type"],
+
+        "High",
+
+        True,
+
+        "High",
+
+        4,
+
+        5000
+
+    )
+
+    st.subheader(
+        "Forecasted Impact"
+    )
+
+    c1,c2,c3 = st.columns(3)
+
+    c1.metric(
+        "Impact Score",
+        result["impact_score"]
+    )
+
+    c2.metric(
+        "Officers",
+        result["officers_range"]
+    )
+
+    c3.metric(
+        "Barricades",
+        result["barricades_range"]
+    )
 
 elif page == "🧠 Learning Engine":
 
