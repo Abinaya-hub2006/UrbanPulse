@@ -3,9 +3,42 @@ import os
 
 FILE_PATH = "data/post_event_reviews.csv"
 
+
 def load_reviews():
 
-    return pd.read_csv(FILE_PATH)
+    if not os.path.exists(FILE_PATH):
+
+        return pd.DataFrame(
+            columns=[
+                "event_type",
+                "predicted_impact",
+                "actual_impact",
+                "predicted_officers",
+                "actual_officers",
+                "predicted_duration",
+                "actual_duration"
+            ]
+        )
+
+    try:
+
+        df = pd.read_csv(FILE_PATH)
+
+        return df
+
+    except:
+
+        return pd.DataFrame(
+            columns=[
+                "event_type",
+                "predicted_impact",
+                "actual_impact",
+                "predicted_officers",
+                "actual_officers",
+                "predicted_duration",
+                "actual_duration"
+            ]
+        )
 
 
 def add_review(
