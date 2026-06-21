@@ -7,7 +7,7 @@ from modules.risk_module import *
 from modules.resource_module import *
 from modules.simulator_module import *
 from modules.diversion_module import *
-
+from modules.learning_module import *
 
 # ==========================================
 # PAGE CONFIG
@@ -102,6 +102,8 @@ page = st.sidebar.radio(
         "🛣 Diversion Control",
 
         "📈 System Analytics"
+
+        "🧠 Learning Engine",
 
     ]
 )
@@ -866,6 +868,107 @@ elif page == "📈 System Analytics":
         fig3,
 
         use_container_width=True
+
+    )
+elif page == "🧠 Learning Engine":
+
+    st.header(
+        "🧠 Post Event Learning Engine"
+    )
+
+    event_type = st.selectbox(
+
+        "Event Type",
+
+        [
+
+            "procession",
+            "vip_movement",
+            "public_event",
+            "construction",
+            "accident"
+
+        ]
+
+    )
+
+    predicted_impact = st.number_input(
+        "Predicted Impact"
+    )
+
+    actual_impact = st.number_input(
+        "Actual Impact"
+    )
+
+    predicted_officers = st.number_input(
+        "Predicted Officers"
+    )
+
+    actual_officers = st.number_input(
+        "Actual Officers Used"
+    )
+
+    predicted_duration = st.number_input(
+        "Predicted Duration"
+    )
+
+    actual_duration = st.number_input(
+        "Actual Duration"
+    )
+
+    if st.button(
+        "Save Review"
+    ):
+
+        add_review(
+
+            event_type,
+
+            predicted_impact,
+
+            actual_impact,
+
+            predicted_officers,
+
+            actual_officers,
+
+            predicted_duration,
+
+            actual_duration
+
+        )
+
+        st.success(
+            "Review Stored Successfully"
+        )
+
+    st.markdown("---")
+
+    reviews = load_reviews()
+
+    st.subheader(
+        "Historical Reviews"
+    )
+
+    st.dataframe(
+        reviews,
+        use_container_width=True
+    )
+
+    accuracy = calculate_accuracy(
+        reviews
+    )
+
+    st.metric(
+        "Prediction Accuracy",
+        f"{accuracy}%"
+    )
+
+    st.info(
+
+        learning_insights(
+            reviews
+        )
 
     )
 
