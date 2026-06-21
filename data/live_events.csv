@@ -1,6 +1,6 @@
 event_name,location,event_type,start_time,status,crowd_size,duration_hours,risk_level
-Political Rally,MG Road,protest,14:00,Live,10000,5,Critical
-Music Festival,HSR Layout,public_event,18:00,Upcoming,5000,4,High
-Cricket Match,Chinnaswamy Stadium,public_event,19:00,Upcoming,25000,6,Critical
-Metro Construction,Silk Board,construction,Ongoing,Live,1000,12,Medium
-VIP Visit,Vidhana Soudha,vip_movement,16:00,Upcoming,3000,2,High
+Political Rally,MG Road,protest,14:00,Live,100,5,Critical
+Music Festival,HSR Layout,public_event,18:00,Upcoming,50,4,High
+Cricket Match,Chinnaswamy Stadium,public_event,19:00,Upcoming,250,6,Critical
+Metro Construction,Silk Board,construction,Ongoing,Live,10,12,Medium
+VIP Visit,Vidhana Soudha,vip_movement,16:00,Upcoming,300,2,High
